@@ -65,7 +65,7 @@ func NewTritonAdapterServer(runtimePort int, config *AdapterConfiguration, log l
 	log = log.WithName("Triton Adapter Server")
 
 	log.Info("Connecting to Triton...", "port", runtimePort)
-	conn, err := grpc.DialContext(context.Background(), fmt.Sprintf("localhost:%d", runtimePort),
+	conn, err := grpc.DialContext(context.Background(), fmt.Sprintf("0.0.0.0:%d", runtimePort),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithConnectParams(grpc.ConnectParams{Backoff: backoff.DefaultConfig, MinConnectTimeout: 10 * time.Second}))
 	if err != nil {

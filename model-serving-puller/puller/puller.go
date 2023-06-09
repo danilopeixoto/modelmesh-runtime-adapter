@@ -140,9 +140,12 @@ func (s *Puller) ProcessLoadModelRequest(ctx context.Context, req *mmesh.LoadMod
 
 	// build and execute the pull command
 
-	// name the local files based on the last element of the paths
-	// TODO: should have some sanitization for filenames
-	modelPathFilename := filepath.Base(req.ModelPath)
+	// Naive check for a single-file or folder model type based on path extension
+	var modelPathFilename string
+	if filepath.Ext(req.ModelPath) != "" {
+		modelPathFilename = filepath.Base(req.ModelPath)
+	}
+
 	targets := []pullman.Target{
 		{
 			RemotePath: req.ModelPath,
@@ -154,9 +157,9 @@ func (s *Puller) ProcessLoadModelRequest(ctx context.Context, req *mmesh.LoadMod
 	var schemaPathFilename string
 	if modelKey.SchemaPath != nil {
 		schemaPath := *modelKey.SchemaPath
-		schemaPathFilename = filepath.Base(schemaPath)
-		// if the names match, generate an internal name
-		if modelPathFilename == schemaPathFilename {
+		if filepath.Ext(schemaPath) != "" {
+			schemaPathFilename = filepath.Base(schemaPath)
+		} else {
 			schemaPathFilename = "_schema.json"
 		}
 
